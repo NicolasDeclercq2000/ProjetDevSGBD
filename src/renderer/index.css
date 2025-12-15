@@ -1,0 +1,46 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;      /* On retire les marges par défaut du navigateur */
+  padding: 0;     /* On gère l'espacement dans App.vue plutôt */
+  width: 100%;    /* On utilise toute la largeur */
+  background-color: #f4f4f9; /* Un petit gris très clair pour le fond de page */
+}
+
+/* --- Styles des Badges --- */
+
+.badges {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+/* On crée une classe de base pour ne pas répéter le code de forme */
+.badge {
+  padding: 4px 10px;      /* De l'espace autour du texte */
+  border-radius: 12px;    /* Des bords bien arrondis (pilule) */
+  font-size: 0.75rem;     /* Texte un peu plus petit */
+  font-weight: 600;       /* Texte un peu plus gras */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1); /* Une légère ombre */
+}
+
+.type-badge {
+  background-color: #3498db; /* Bleu */
+  color: white;
+}
+
+.habitat-badge {
+  background-color: #27ae60; /* Vert nature */
+  color: white;
+}
+
+.faiblesse-item {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  padding: 5px 0;
+}
+.element-name {
+  font-weight: bold;
+  color: #e74c3c; /* Un petit rouge pour signaler le danger/faiblesse */
+}

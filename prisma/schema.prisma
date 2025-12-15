@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Armes {
+  id_arme           Int              @id @default(autoincrement())
+  nom_arme          String           @db.VarChar(100)
+  type_arme         String           @db.VarChar(50)
+  element_principal Int?
+  Elements          Elements?        @relation(fields: [element_principal], references: [id_element], onDelete: NoAction, onUpdate: NoAction, map: "armes_ibfk_1")
+  Armes_Monstres    Armes_Monstres[]
+
+  @@index([element_principal], map: "element_principal")
+}
+
+model Armes_Monstres {
+  id_arme    Int
+  id_monstre Int
+  Armes      Armes    @relation(fields: [id_arme], references: [id_arme], onDelete: NoAction, onUpdate: NoAction, map: "armes_monstres_ibfk_1")
+  Monstres   Monstres @relation(fields: [id_monstre], references: [id_monstre], onDelete: NoAction, onUpdate: NoAction, map: "armes_monstres_ibfk_2")
+
+  @@id([id_arme, id_monstre])
+  @@index([id_monstre], map: "id_monstre")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model Butins {
+  id_butin   Int       @id @default(autoincrement())
+  id_monstre Int?
+  nom_objet  String    @db.VarChar(100)
+  rarete     Int?
+  Monstres   Monstres? @relation(fields: [id_monstre], references: [id_monstre], onDelete: NoAction, onUpdate: NoAction, map: "butins_ibfk_1")
+
+  @@index([id_monstre], map: "id_monstre")
+}
+
+model Elements {
+  id_element  Int          @id @default(autoincrement())
+  nom_element String       @db.VarChar(100)
+  Armes       Armes[]
+  Faiblesses  Faiblesses[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model Faiblesses {
+  id_faiblesse Int       @id @default(autoincrement())
+  id_monstre   Int?
+  id_element   Int?
+  niveau       Int?
+  Monstres     Monstres? @relation(fields: [id_monstre], references: [id_monstre], onDelete: NoAction, onUpdate: NoAction, map: "faiblesses_ibfk_1")
+  Elements     Elements? @relation(fields: [id_element], references: [id_element], onDelete: NoAction, onUpdate: NoAction, map: "faiblesses_ibfk_2")
+
+  @@index([id_element], map: "id_element")
+  @@index([id_monstre], map: "id_monstre")
+}
+
+model Habitats {
+  id_habitat  Int        @id @default(autoincrement())
+  nom_habitat String     @db.VarChar(100)
+  region      String?    @db.VarChar(100)
+  Monstres    Monstres[]
+}
+
+model Monstres {
+  id_monstre      Int               @id @default(autoincrement())
+  nom_monstre     String            @db.VarChar(100)
+  id_type         Int?
+  id_habitat      Int?
+  description     String?           @db.Text
+  Armes_Monstres  Armes_Monstres[]
+  Butins          Butins[]
+  Faiblesses      Faiblesses[]
+  Types_Monstres  Types_Monstres?   @relation(fields: [id_type], references: [id_type], onDelete: NoAction, onUpdate: NoAction, map: "monstres_ibfk_1")
+  Habitats        Habitats?         @relation(fields: [id_habitat], references: [id_habitat], onDelete: NoAction, onUpdate: NoAction, map: "monstres_ibfk_2")
+  Quetes_Monstres Quetes_Monstres[]
+
+  @@index([id_habitat], map: "id_habitat")
+  @@index([id_type], map: "id_type")
+}
+
+model Quetes {
+  id_quete        Int                @id @default(autoincrement())
+  titre           String             @db.VarChar(150)
+  description     String?            @db.Text
+  difficulte      Quetes_difficulte?
+  recompense      Int?
+  Quetes_Monstres Quetes_Monstres[]
+}
+
+model Quetes_Monstres {
+  id_quete   Int
+  id_monstre Int
+  Quetes     Quetes   @relation(fields: [id_quete], references: [id_quete], onDelete: NoAction, onUpdate: NoAction, map: "quetes_monstres_ibfk_1")
+  Monstres   Monstres @relation(fields: [id_monstre], references: [id_monstre], onDelete: NoAction, onUpdate: NoAction, map: "quetes_monstres_ibfk_2")
+
+  @@id([id_quete, id_monstre])
+  @@index([id_monstre], map: "id_monstre")
+}
+
+model Types_Monstres {
+  id_type  Int        @id @default(autoincrement())
+  nom_type String     @db.VarChar(100)
+  Monstres Monstres[]
+}
+
+model Utilisateurs {
+  id_utilisateur Int       @id @default(autoincrement())
+  nom            String    @db.VarChar(100)
+  email          String    @unique(map: "email") @db.VarChar(150)
+  mot_de_passe   String    @db.VarChar(255)
+  date_creation  DateTime? @default(now()) @db.Timestamp(0)
+  role           Int?
+}
+
+enum Quetes_difficulte {
+  Facile
+  Moyenne
+  Difficile
+  Expert
+}
